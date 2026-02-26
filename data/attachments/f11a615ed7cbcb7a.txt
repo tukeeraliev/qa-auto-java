@@ -1,0 +1,10 @@
+➡️ REQUEST
+PUT https://restful-booker.herokuapp.com/booking/4848
+
+HEADERS:
+Cookie: token=25c351f635b2dab
+Accept: */*
+Content-Type: application/json
+
+BODY:
+{"firstname":"Updated","lastname":"Smith","totalprice":123,"depositpaid":true,"bookingdates":{"checkin":"2025-01-01","checkout":"2025-01-05"},"additionalneeds":"Breakfast"}
