@@ -5,16 +5,15 @@ pipeline {
         choice(
             name: 'SUITE',
             choices: ['api-smoke', 'api-regression', 'ui-smoke', 'ui-regression'],
-            description: 'Select test suite to run'
+            description: 'Select TestNG group to run'
         )
     }
 
     tools {
-        maven 'Maven'   // имя Maven из Jenkins Global Tool Configuration
+        maven 'Maven'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -23,7 +22,7 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                bat "mvn clean test -P${params.SUITE}"
+                bat "mvn clean test -Dgroups=${params.SUITE}"
             }
         }
 
@@ -31,14 +30,14 @@ pipeline {
             steps {
                 allure includeProperties: false,
                        jdk: '',
-                       results: [[path: 'allure-results']]
+                       results: [[path: 'target/allure-results']]
             }
         }
     }
 
     post {
         always {
-            junit 'target/surefire-reports/*.xml'
+            junit testResults: 'target/surefire-reports/*.xml', keepLongStdio: false
         }
     }
 }
