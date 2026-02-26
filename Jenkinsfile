@@ -5,7 +5,7 @@ pipeline {
         choice(
             name: 'SUITE',
             choices: ['api-smoke', 'api-regression', 'ui-smoke', 'ui-regression'],
-            description: 'Select TestNG group to run'
+            description: 'Which suite to run'
         )
     }
 
@@ -14,6 +14,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -22,7 +23,23 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                bat "mvn clean test -Dgroups=${params.SUITE}"
+                script {
+                    def groups = ''
+
+                    if (params.SUITE == 'ui-smoke') {
+                        groups = 'ui,smoke'
+                    } else if (params.SUITE == 'ui-regression') {
+                        groups = 'ui,regression'
+                    } else if (params.SUITE == 'api-smoke') {
+                        groups = 'api,smoke'
+                    } else if (params.SUITE == 'api-regression') {
+                        groups = 'api,regression'
+                    } else {
+                        error("Unknown SUITE value: ${params.SUITE}")
+                    }
+
+                    bat "mvn clean test -Dgroups=${groups}"
+                }
             }
         }
 
@@ -37,7 +54,9 @@ pipeline {
 
     post {
         always {
-            junit testResults: 'target/surefire-reports/*.xml', keepLongStdio: false
+            junit testResults: 'target/surefire-reports/*.xml',
+                  allowEmptyResults: true,
+                  keepLongStdio: false
         }
     }
 }
