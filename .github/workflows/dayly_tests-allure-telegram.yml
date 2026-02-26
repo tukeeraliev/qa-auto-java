@@ -1,0 +1,99 @@
+name: Java Tests + Allure -> Telegram
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Clean allure results
+        run: rm -rf target/allure-results allure-report
+
+      - name: Run tests
+        run: mvn -B -Dtest="**/*Test,**/*Tests" test || true
+
+      - name: Install Allure
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          curl -L -o allure.zip https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.27.0/allure-commandline-2.27.0.zip
+          unzip -q allure.zip -d "$HOME/allure"
+          echo "$HOME/allure/allure-2.27.0/bin" >> "$GITHUB_PATH"
+
+      - name: Generate report
+        run: allure generate target/allure-results -o allure-report --clean
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: |
+          npm i -D playwright
+          npx playwright install --with-deps chromium
+
+      - name: Make screenshot
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/dev/null 2>&1 &
+          SERVER_PID=$!
+          sleep 1
+
+          cat > shot.mjs <<'EOF'
+          import { chromium } from "playwright";
+          const browser = await chromium.launch();
+          const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+          await page.goto("http://127.0.0.1:8000/allure-report/index.html", { waitUntil: "domcontentloaded" });
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: "allure-summary.png", fullPage: true });
+          await browser.close();
+          EOF
+
+          node shot.mjs
+          kill $SERVER_PID || true
+
+      - name: Publish to Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          publish_branch: gh-pages
+
+      - name: Send to Telegram
+        env:
+          BOT: ${{ secrets.TG_BOT_TOKEN }}
+          CHAT: ${{ secrets.TG_CHAT_ID }}
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="$(echo '${{ github.repository }}' | cut -d'/' -f2)"
+          LINK="https://${OWNER}.github.io/${REPO}/"
+
+          curl -s -X POST https://api.telegram.org/bot$BOT/sendMessage \
+            -d chat_id="$CHAT" \
+            -d text="Allure report: $LINK"
+
+          curl -s -X POST https://api.telegram.org/bot$BOT/sendPhoto \
+            -F chat_id="$CHAT" \
+            -F photo=@allure-summary.png
