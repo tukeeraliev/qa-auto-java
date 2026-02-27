@@ -31,12 +31,14 @@ pipeline {
           def groups = groupsMap[params.SUITE]
           if (!groups) error("Unknown SUITE value: ${params.SUITE}")
 
+bat 'echo API_BASE_URL=%API_BASE_URL%'
+bat 'echo UI_BASE_URL=%UI_BASE_URL%'
+
           bat """
           mvn -B clean test ^
             -Dgroups=${groups} ^
-            -Dprofile=ci ^
-            -Dapi.base.url=%API_BASE_URL% ^
-            -Dui.base.url=%UI_BASE_URL%
+            -Dbase.url=${env.API_BASE_URL} ^
+            -Dui.base.url=${env.UI_BASE_URL}
           """
         }
       }

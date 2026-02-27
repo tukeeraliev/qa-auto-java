@@ -26,11 +26,12 @@ public class BaseUiTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
+
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
 
-        // Если запуск в CI (Jenkins / GitHub Actions)
+        // CI режим
         if ("true".equalsIgnoreCase(System.getenv("CI"))) {
             options.addArguments("--headless=new");
             options.addArguments("--no-sandbox");
@@ -45,20 +46,28 @@ public class BaseUiTest {
 
         driver.manage().deleteAllCookies();
 
-        // ✅ БЕЗОПАСНО получаем URL
+        // ====== ДИАГНОСТИКА ======
+        System.out.println("=== CONFIG DEBUG START ===");
+        System.out.println("System property ui.base.url = " + System.getProperty("ui.base.url"));
+        System.out.println("Env UI_BASE_URL = " + System.getenv("UI_BASE_URL"));
+        System.out.println("System property base.url = " + System.getProperty("base.url"));
+        System.out.println("Env API_BASE_URL = " + System.getenv("API_BASE_URL"));
+        System.out.println("System property profile = " + System.getProperty("profile"));
+        System.out.println("===========================");
+
         String url = AppConfig.uiBaseUrl();
+
+        System.out.println("Resolved UI URL from AppConfig = " + url);
 
         if (url == null || url.isBlank()) {
             throw new IllegalStateException(
-                    "UI base url is not set.\n" +
-                            "Provide one of the following:\n" +
-                            "1) -Dui.base.url=https://...\n" +
-                            "2) environment variable UI_BASE_URL\n" +
-                            "3) value in properties file"
+                    "UI base url is NOT set.\n" +
+                            "Check:\n" +
+                            "-Dui.base.url\n" +
+                            "UI_BASE_URL env\n" +
+                            "config/local.properties or config/ci.properties"
             );
         }
-
-        System.out.println("UI BASE URL = " + url);
 
         driver.get(url);
 
