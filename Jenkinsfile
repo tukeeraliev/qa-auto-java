@@ -5,6 +5,7 @@ pipeline {
     MAVEN_OPTS   = "-Dmaven.repo.local=.m2"
     API_BASE_URL = "https://restful-booker.herokuapp.com"
     UI_BASE_URL  = "https://www.saucedemo.com"
+    CI = "true" // чтобы BaseUiTest включал headless
   }
 
   parameters {
@@ -33,6 +34,7 @@ pipeline {
           bat """
           mvn -B clean test ^
             -Dgroups=${groups} ^
+            -Dprofile=ci ^
             -Dapi.base.url=%API_BASE_URL% ^
             -Dui.base.url=%UI_BASE_URL%
           """

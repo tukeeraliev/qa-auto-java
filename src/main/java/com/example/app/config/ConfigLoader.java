@@ -24,7 +24,13 @@ public final class ConfigLoader {
     private ConfigLoader() {}
 
     public static String get(String key) {
-        // приоритет: -Dkey=... > properties
-        return System.getProperty(key, PROPERTIES.getProperty(key));
+        String sys = System.getProperty(key);
+        if (sys != null && !sys.isBlank()) return sys;
+
+        String envKey = key.toUpperCase().replace('.', '_'); // ui.base.url -> UI_BASE_URL
+        String env = System.getenv(envKey);
+        if (env != null && !env.isBlank()) return env;
+
+        return PROPERTIES.getProperty(key);
     }
 }

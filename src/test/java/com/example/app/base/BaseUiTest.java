@@ -29,26 +29,39 @@ public class BaseUiTest {
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
-        // если тесты идут в CI (GitHub Actions)
+
+        // Если запуск в CI (Jenkins / GitHub Actions)
         if ("true".equalsIgnoreCase(System.getenv("CI"))) {
             options.addArguments("--headless=new");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--window-size=1920,1080");
         } else {
-            // локально нормальный браузер
             options.addArguments("--start-maximized");
         }
 
-
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(8));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        // ✅ чистим сессию
         driver.manage().deleteAllCookies();
 
-        // localStorage/sessionStorage чистятся только когда открыта страница домена
-        driver.get(AppConfig.uiBaseUrl());
+        // ✅ БЕЗОПАСНО получаем URL
+        String url = AppConfig.uiBaseUrl();
+
+        if (url == null || url.isBlank()) {
+            throw new IllegalStateException(
+                    "UI base url is not set.\n" +
+                            "Provide one of the following:\n" +
+                            "1) -Dui.base.url=https://...\n" +
+                            "2) environment variable UI_BASE_URL\n" +
+                            "3) value in properties file"
+            );
+        }
+
+        System.out.println("UI BASE URL = " + url);
+
+        driver.get(url);
+
         ((JavascriptExecutor) driver).executeScript(
                 "window.localStorage.clear(); window.sessionStorage.clear();"
         );
@@ -58,7 +71,8 @@ public class BaseUiTest {
         if (driver == null) return;
         try {
             byte[] bytes = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-            Allure.addAttachment("Screenshot", new ByteArrayInputStream(bytes));
+            Allure.addAttachment("Screenshot",
+                    new ByteArrayInputStream(bytes));
         } catch (Exception ignored) {}
     }
 
@@ -85,13 +99,16 @@ public class BaseUiTest {
             String text = logs.getAll().stream()
                     .map(LogEntry::toString)
                     .collect(Collectors.joining("\n"));
+
             Allure.addAttachment("Browser console", "text/plain",
-                    new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)), ".log");
+                    new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)),
+                    ".log");
         } catch (Exception ignored) {}
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult result) {
+
         if (result != null && result.getStatus() == ITestResult.FAILURE) {
             attachUrl();
             attachScreenshot();
@@ -100,7 +117,9 @@ public class BaseUiTest {
         }
 
         if (driver != null) {
-            try { driver.quit(); } catch (Exception ignored) {}
+            try {
+                driver.quit();
+            } catch (Exception ignored) {}
             driver = null;
         }
     }
