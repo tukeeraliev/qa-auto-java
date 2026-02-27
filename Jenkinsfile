@@ -41,7 +41,11 @@ pipeline {
                         error("Unknown SUITE value: ${params.SUITE}")
                     }
 
-                    bat "mvn clean test \"-Dgroups=${groups}\""
+                    bat """
+                        mvn clean test ^
+                          -Dgroups=${groups} ^
+                          -Dprofile=ci
+                    """
                 }
             }
         }
