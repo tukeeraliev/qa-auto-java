@@ -1,69 +1,56 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        MAVEN_OPTS = "-Dmaven.repo.local=.m2"
+  environment {
+    MAVEN_OPTS   = "-Dmaven.repo.local=.m2"
+    API_BASE_URL = "https://restful-booker.herokuapp.com"
+    UI_BASE_URL  = "https://www.saucedemo.com"
+  }
+
+  parameters {
+    choice(name: 'SUITE', choices: ['api-smoke','api-regression','ui-smoke','ui-regression'])
+  }
+
+  tools { maven 'Maven' }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
     }
 
-    parameters {
-        choice(
-            name: 'SUITE',
-            choices: ['api-smoke', 'api-regression', 'ui-smoke', 'ui-regression'],
-            description: 'Which suite to run'
-        )
-    }
+    stage('Build & Test') {
+      steps {
+        script {
+          def groupsMap = [
+            'ui-smoke'      : 'ui,smoke',
+            'ui-regression' : 'ui,regression',
+            'api-smoke'     : 'api,smoke',
+            'api-regression': 'api,regression'
+          ]
+          def groups = groupsMap[params.SUITE]
+          if (!groups) error("Unknown SUITE value: ${params.SUITE}")
 
-    tools {
-        maven 'Maven'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
+          bat """
+          mvn -B clean test ^
+            -Dgroups=${groups} ^
+            -Dapi.base.url=%API_BASE_URL% ^
+            -Dui.base.url=%UI_BASE_URL%
+          """
         }
-
-        stage('Build & Test') {
-            steps {
-                script {
-                    def groups = ''
-
-                    if (params.SUITE == 'ui-smoke') {
-                        groups = 'ui,smoke'
-                    } else if (params.SUITE == 'ui-regression') {
-                        groups = 'ui,regression'
-                    } else if (params.SUITE == 'api-smoke') {
-                        groups = 'api,smoke'
-                    } else if (params.SUITE == 'api-regression') {
-                        groups = 'api,regression'
-                    } else {
-                        error("Unknown SUITE value: ${params.SUITE}")
-                    }
-
-                    bat """
-                        mvn clean test ^
-                          -Dgroups=${groups} ^
-                          -Dprofile=ci
-                    """
-                }
-            }
-        }
-
-        stage('Allure Report') {
-            steps {
-                allure includeProperties: false,
-                       jdk: '',
-                       results: [[path: 'target/allure-results']]
-            }
-        }
+      }
     }
 
-    post {
-        always {
-            junit testResults: 'target/surefire-reports/*.xml',
-                  allowEmptyResults: true,
-                  keepLongStdio: false
-        }
+    stage('Allure Report') {
+      when { expression { fileExists('target/allure-results') } }
+      steps {
+        allure includeProperties: false, jdk: '', results: [[path: 'target/allure-results']]
+      }
     }
+  }
+
+  post {
+    always {
+      junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+    }
+  }
 }
