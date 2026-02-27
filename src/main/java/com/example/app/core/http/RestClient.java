@@ -8,9 +8,13 @@ import io.restassured.specification.RequestSpecification;
 
 public final class RestClient {
 
-    private RestClient() {
+    static {
+        String base = AppConfig.baseUrl();
+        System.out.println("RestAssured.baseURI = " + base);
+        RestAssured.baseURI = base;
+    }
 
-        RestAssured.baseURI = AppConfig.baseUrl();
+    private RestClient() {
     }
 
     public static RequestSpecification given() {
