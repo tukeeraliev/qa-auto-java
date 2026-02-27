@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        MAVEN_OPTS = "-Dmaven.repo.local=.m2"
+    }
+
     parameters {
         choice(
             name: 'SUITE',
@@ -14,7 +18,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -38,7 +41,7 @@ pipeline {
                         error("Unknown SUITE value: ${params.SUITE}")
                     }
 
-                    bat "mvn clean test -Dgroups=${groups}"
+                    bat "mvn clean test \"-Dgroups=${groups}\""
                 }
             }
         }
