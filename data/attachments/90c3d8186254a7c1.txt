@@ -1,0 +1,9 @@
+➡️ REQUEST
+DELETE https://restful-booker.herokuapp.com/booking/4896
+
+HEADERS:
+Cookie: token=5ecbe6ae9753b5d
+Accept: */*
+Content-Type: application/json
+
+BODY:
