@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: qa_db
+    environment:
+      POSTGRES_DB: qa
+      POSTGRES_USER: qa_user
+      POSTGRES_PASSWORD: qa_pass
+    ports:
+      - "5433:5432"
