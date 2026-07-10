@@ -1,0 +1,17 @@
+⬅️ RESPONSE
+STATUS: HTTP/1.1 200 OK
+
+HEADERS:
+Content-Length: 198
+Content-Type: application/json; charset=utf-8
+Date: Fri, 10 Jul 2026 09:48:24 GMT
+Etag: W/"c6-GOOE8X65mgQDtLi0V3FoHYhtSDE"
+Nel: {"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}
+Report-To: {"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=CY8otUIeW4n2K5HQHvPhkEo%2Bfr%2F87ptEMUx9qam7e38%3D\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\u0026ts=1783676904"}],"max_age":3600}
+Reporting-Endpoints: heroku-nel="https://nel.heroku.com/reports?s=CY8otUIeW4n2K5HQHvPhkEo%2Bfr%2F87ptEMUx9qam7e38%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1783676904"
+Server: Heroku
+Via: 1.1 heroku-router
+X-Powered-By: Express
+
+BODY:
+{"bookingid":4331,"booking":{"firstname":"John","lastname":"Smith","totalprice":123,"depositpaid":true,"bookingdates":{"checkin":"2025-01-01","checkout":"2025-01-05"},"additionalneeds":"Breakfast"}}
