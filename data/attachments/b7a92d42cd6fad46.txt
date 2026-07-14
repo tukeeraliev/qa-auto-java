@@ -1,0 +1,17 @@
+⬅️ RESPONSE
+STATUS: HTTP/1.1 200 OK
+
+HEADERS:
+Content-Length: 27
+Content-Type: application/json; charset=utf-8
+Date: Tue, 14 Jul 2026 08:20:09 GMT
+Etag: W/"1b-QHgvYsYfb4k9GCLFpAQUK9XrsaQ"
+Nel: {"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}
+Report-To: {"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=D902gl03A%2Fp1%2BI9jjkRbDa5KC296MP0rw0nBvODQ71E%3D\u0026sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add\u0026ts=1784017209"}],"max_age":3600}
+Reporting-Endpoints: heroku-nel="https://nel.heroku.com/reports?s=D902gl03A%2Fp1%2BI9jjkRbDa5KC296MP0rw0nBvODQ71E%3D&sid=c46efe9b-d3d2-4a0c-8c76-bfafa16c5add&ts=1784017209"
+Server: Heroku
+Via: 1.1 heroku-router
+X-Powered-By: Express
+
+BODY:
+{"token":"2e54c1cdda52420"}
