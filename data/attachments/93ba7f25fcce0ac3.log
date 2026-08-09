@@ -1,5 +1,0 @@
-[2026-08-08T07:04:23.224Z] [SEVERE] https://www.saucedemo.com/ - Access to fetch at 'https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&token=TOKEN' from origin 'https://www.saucedemo.com' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-[2026-08-08T07:04:23.230Z] [SEVERE] https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&token=TOKEN - Failed to load resource: net::ERR_FAILED
-[2026-08-08T07:04:23.249Z] [SEVERE] https://events.backtrace.io/api/summed-events/submit?universe=UNIVERSE&token=TOKEN - Failed to load resource: the server responded with a status of 401 (Unauthorized)
-[2026-08-08T07:04:23.329Z] [SEVERE] https://events.backtrace.io/api/summed-events/submit?universe=UNIVERSE&token=TOKEN - Failed to load resource: the server responded with a status of 401 (Unauthorized)
-[2026-08-08T07:04:23.365Z] [SEVERE] https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&token=TOKEN - Failed to load resource: the server responded with a status of 401 (Unauthorized)
