@@ -1,0 +1,3 @@
+[2026-08-17T07:07:46.510Z] [SEVERE] https://fonts.gstatic.com/s/dmsans/v17/rP2-p2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopwDRUUHvP-6oMc498fqf0DPCg.woff2 - Failed to load resource: the server responded with a status of 404 ()
+[2026-08-17T07:07:46.525Z] [SEVERE] https://events.backtrace.io/api/unique-events/submit?universe=UNIVERSE&token=TOKEN - Failed to load resource: the server responded with a status of 401 (Unauthorized)
+[2026-08-17T07:07:46.534Z] [SEVERE] https://events.backtrace.io/api/summed-events/submit?universe=UNIVERSE&token=TOKEN - Failed to load resource: the server responded with a status of 401 (Unauthorized)
