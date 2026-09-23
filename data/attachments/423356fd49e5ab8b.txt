@@ -1,0 +1,8 @@
+➡️ REQUEST
+DELETE https://restful-booker.herokuapp.com/booking/5023
+
+HEADERS:
+Accept: */*
+Content-Type: application/json
+
+BODY:
