@@ -1,0 +1,9 @@
+➡️ REQUEST
+POST https://restful-booker.herokuapp.com/auth
+
+HEADERS:
+Accept: */*
+Content-Type: application/json
+
+BODY:
+{"username":"admin","password":"ksk5i2l4h5i"}
