@@ -1,0 +1,8 @@
+➡️ REQUEST
+GET https://restful-booker.herokuapp.com/booking/2185
+
+HEADERS:
+Accept: */*
+Content-Type: application/json
+
+BODY:
